@@ -8,30 +8,26 @@ function Signup() {
     const [message, setMessage] = useState("");
 
     const handleSignup = async () => {
-        // Validation: All fields must be filled
         if (!name.trim() || !email.trim() || !password.trim()) {
             alert("All fields are required!");
-            return; // Do not proceed if any field is empty
+            return;
         }
 
-        // Email Format Validation (Regex to check if the email is valid)
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             alert("Please enter a valid email address.");
-            return; // Do not proceed if email format is invalid
+            return;
         }
 
-        // Password Validation: Minimum 8 characters and starts with a capital letter
         if (password.length < 8) {
             alert("Password must be at least 8 characters long.");
-            return; // Do not proceed if password is less than 8 characters
+            return;
         }
         if (password[0] !== password[0].toUpperCase()) {
             alert("Password must start with a capital letter.");
-            return; // Do not proceed if the password does not start with a capital letter
+            return;
         }
 
-        // If all validations are passed, proceed to send data to the server
         try {
             const response = await fetch("http://localhost:5000/signup", {
                 method: "POST",
@@ -44,12 +40,11 @@ function Signup() {
             if (response.ok) {
                 // Success
                 setMessage(data.message);
-                alert(data.message); // Show success message
-                setName(""); // Clear fields after successful signup
+                alert(data.message);
+                setName("");
                 setEmail("");
                 setPassword("");
             } else {
-                // Error handling
                 alert(data.message);
             }
         } catch (error) {
@@ -84,8 +79,6 @@ function Signup() {
             <br />
             <button onClick={handleSignup}>Signup</button>
             <p>{message}</p>
-
-            {/* Link to Login Page */}
             <p>
                 Already have an account?{" "}
                 <Link to="/login">Login here</Link>

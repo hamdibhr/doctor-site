@@ -8,31 +8,20 @@ function Login() {
 
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
-        // Validation
+    const handleLogin = async () => {  
         if (!email.trim() || !password.trim()) {
             alert("All fields are required!");
             return;
         }
-
-        // Email Format Validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             alert("Please enter a valid email address.");
             return;
         }
-
-        // Password Validation: Minimum 8 characters and starts with a capital letter
         if (password.length < 8) {
             alert("Password must be at least 8 characters long.");
             return;
         }
-        if (password[0] !== password[0].toUpperCase()) {
-            alert("Password must start with a capital letter.");
-            return;
-        }
-
-        // Proceed with login if fields are valid
         try {
             const response = await fetch("http://localhost:5000/login", {
                 method: "POST",
@@ -43,7 +32,7 @@ function Login() {
             const data = await response.json();
             if (response.ok) {
                 setMessage(data.message);
-                navigate("/home"); // Redirect to Home page on success
+                navigate("/home");
             } else {
                 alert(data.message);
             }
@@ -51,7 +40,6 @@ function Login() {
             console.error("Login error:", error);
         }
     };
-
     return (
         <div>
             <h1>Login</h1>
@@ -71,8 +59,6 @@ function Login() {
             <br />
             <button onClick={handleLogin}>Login</button>
             <p>{message}</p>
-
-            {/* Link to Signup Page */}
             <p>
                 Don't have an account?{" "}
                 <Link to="/signup">Sign up here</Link>
