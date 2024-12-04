@@ -2,17 +2,16 @@ const express = require("express");
 const mysql = require("mysql2");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const bcrypt = require("bcrypt");
 const app = express();
+
 app.use(cors());
 app.use(bodyParser.json());
-
-// MySQL Database Connection
 const db = mysql.createConnection({
     host: "localhost",
-    user: "root", // Replace with your DB username
-    password: "123456", // Replace with your DB password
-    database: "framework", // Replace with your database name
+    user: "root", 
+    password: "123456",
+    database: "framework",
 });
 
 db.connect((err) => {
@@ -23,35 +22,55 @@ db.connect((err) => {
     console.log("Connected to MySQL!");
 });
 
-// Signup Endpoint
-app.post("/signup", (req, res) => {
+app.post("/signup", async (req, res) => {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
         return res.status(400).json({ message: "All fields are required!" });
     }
-    const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
-    db.query(query, [name, email, password], (err, result) => {
-        if (err) {
-            if (err.code === "ER_DUP_ENTRY") {
-                res.status(400).json({ message: "Email already exists!" });
+
+    try {
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const query = "INSERT INTO users (name, email, password) VALUES (?, ?, ?)";
+        db.query(query, [name, email, hashedPassword], (err, result) => {
+            if (err) {
+                if (err.code === "ER_DUP_ENTRY") {
+                    res.status(400).json({ message: "Email already exists!" });
+                } else {
+                    res.status(500).json({ message: "Error signing up!" });
+                }
             } else {
-                res.status(500).json({ message: "Error signing up!" });
+                res.status(201).json({ message: "Signup successful!" });
             }
-        } else {
-            res.status(201).json({ message: "Signup successful!" });
-        }
-    });
+        });
+    } catch (err) {
+        res.status(500).json({ message: "Error hashing password!" });
+    }
 });
 
-// Login Endpoint
 app.post("/login", (req, res) => {
     const { email, password } = req.body;
-    const query = "SELECT * FROM users WHERE email = ? AND password = ?";
-    db.query(query, [email, password], (err, results) => {
+
+    if (!email || !password) {
+        return res.status(400).json({ message: "All fields are required!" });
+    }
+
+    const query = "SELECT * FROM users WHERE email = ?";
+    db.query(query, [email], async (err, results) => {
         if (err) {
-            res.status(500).json({ message: "Error logging in!" });
-        } else if (results.length > 0) {
-            res.status(200).json({ message: "Login successful!", user: results[0] });
+            return res.status(500).json({ message: "Error logging in!" });
+        }
+
+        if (results.length > 0) {
+            const user = results[0];
+
+            const match = await bcrypt.compare(password, user.password);
+            if (match) {
+                res.status(200).json({ message: "Login successful!", user });
+            } else {
+                res.status(401).json({ message: "Invalid email or password!" });
+            }
         } else {
             res.status(401).json({ message: "Invalid email or password!" });
         }
