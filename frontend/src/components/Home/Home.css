@@ -1,0 +1,117 @@
+/* Home.css */
+
+/* Container layout */
+.container {
+  display: grid;
+  grid-template-columns: 1fr; /* Default for small screens */
+  height: 100vh;
+  background-color: white;
+}
+
+/* Left section styles */
+.left-side {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center; /* Center text for small screens */
+}
+
+.left-side h1 {
+  font-size: 32px;
+  color: #011632;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.left-side p {
+  font-size: 16px;
+  color: #3c4959;
+  margin-bottom: 20px;
+}
+
+.left-side button {
+  width: 220px;
+  height: 50px;
+  background-color: #1376f8;
+  color: white;
+  border-radius: 25px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin-bottom: 20px;
+}
+
+.left-side button:hover {
+  background-color: #02234c;
+}
+
+/* Contact info section */
+.contact-info {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* Center the contact info on smaller screens */
+  margin-top: 10px;
+}
+
+.contact-info p {
+  font-size: 16px;
+  color: #011632;
+  margin-left: 10px;
+}
+
+.contact-info p:last-child {
+  font-size: 18px;
+  color: #3c4959;
+  font-weight: bold;
+}
+
+/* Right section (image) */
+.right-side {
+  display: none; /* Hide the image initially */
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.right-side img {
+  width: 90%;
+  height: auto;
+  object-fit: cover;
+  max-height: 85%;
+  margin-right: 20%;
+}
+
+/* Media queries for larger screens (e.g., tablets and up) */
+@media screen and (min-width: 768px) {
+  .container {
+    grid-template-columns: 2fr 1fr; /* Split into two columns */
+  }
+
+  .left-side {
+    text-align: left; /* Align text left on larger screens */
+    padding: 40px;
+  }
+
+  .left-side h1 {
+    font-size: 42px;
+  }
+
+  .left-side p {
+    font-size: 18px;
+  }
+
+  .right-side {
+    display: flex; /* Show image on larger screens */
+  }
+
+  .right-side img {
+    width: 90%;
+    height: 85%;
+  }
+
+  .contact-info {
+    text-align: left; /* Align contact info text to left on larger screens */
+    margin-top: 15px;
+  }
+}
